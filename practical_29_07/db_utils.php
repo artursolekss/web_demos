@@ -42,4 +42,19 @@ function updateCustomer(
 
 function saveFromFile(string $filename)
 {
+    $file = fopen($filename, "r");
+    if ($file == false) {
+        exit();
+    }
+    //We skip the heder line
+    $csvContentLineArr = fgetcsv($file, filesize($filename), ";");
+
+    while ($csvContentLineArr = fgetcsv($file, filesize($filename), ";")) :
+    ///implement here
+    /*
+    $csvContentLineArr[0] == Kate;
+    $csvContentLineArr[1] == Smith;
+    etc.
+    */
+    endwhile;
 }
