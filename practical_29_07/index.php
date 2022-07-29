@@ -12,8 +12,7 @@ if ($err === "")
     <?php include("header.php") ?>
 </head>
 
-<body onload="onInit()">
-    <?php printHelloName("Janis", "Liepins", "II") ?>
+<body>
     <div class="container">
         <?php if ($err === "") : ?>
             <b>
@@ -34,7 +33,7 @@ if ($err === "")
                 echo "</div>";
 
                 echo "<div class='col'>";
-                echo "<input value='" . $entry['firstname'] . "'>";
+                echo ($entry['firstname']);
                 echo "</div>";
 
                 echo "<div class='col'>";
