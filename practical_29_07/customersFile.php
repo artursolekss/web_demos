@@ -1,3 +1,10 @@
+<?php
+include("db_utils.php");
+
+if (isset($_POST["filesave"]))
+    saveFromFile($_POST["filesave"]);
+?>
+
 <head>
     <?php include("header.php") ?>
 </head>
@@ -44,5 +51,11 @@
             fclose($file);
         endif;
         ?>
+        <?php if (isset($_POST["filename"])) : ?>
+            <form method="post">
+                <button class="btn btn-primary">Save</button>
+                <input hidden name="filesave" value="<?= $_POST["filename"] ?>">
+            </form>
+        <?php endif ?>
     </div>
 </body>

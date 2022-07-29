@@ -39,3 +39,7 @@ function updateCustomer(
     phone='$phone' WHERE id=$id";
     $con->query($query);
 }
+
+function saveFromFile(string $filename)
+{
+}
