@@ -14,6 +14,10 @@ if (isset($_POST["filesave"]))
         <input type="file" name="filename">
         <button class="btn">Read</button>
     </form>
+    <form method="get" action="selectCustomer.php">
+        <button class="btn">Get customers from DB</button>
+        <input hidden name="id" value="">
+    </form>
     <div class="container">
         <?php
         if (isset($_POST["filename"])) :

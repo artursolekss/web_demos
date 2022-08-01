@@ -16,9 +16,11 @@ if (isset($_POST["id"]) && $err === "") :
 endif;
 $entry = null;
 if (isset($_GET["id"]) && $err === "") :
-    $result = selectCustomers($con, $_GET["id"]);
-    $entry = $result->fetch_assoc();
+    $result = selectCustomers($con, intval($_GET["id"]));
 endif;
+
+if (isset($_POST["fileName"]))
+    saveCustomersToCSVFile($_POST["fileName"]);
 ?>
 
 <head>
@@ -50,10 +52,10 @@ endif;
             </div>
         </b>
         <form method="post">
-            <?php if ($entry !== null) :
+            <?php while ($entry = $result->fetch_assoc()) :
                 echo "<div class='row'>";
 
-                echo "<input hidden name='id' value=". $entry['id']. ">";
+                echo "<input hidden name='id' value=" . $entry['id'] . ">";
 
                 echo "<div class='col'>";
                 echo ($entry["id"]);
@@ -79,8 +81,12 @@ endif;
                 echo "</div>";
 
                 echo "</div>";
-            endif;
+            endwhile;
             ?>
+        </form>
+        <form method="post">
+            <input name="fileName" value=".csv">
+            <button class="btn">Save to file</button>
         </form>
     </div>
 
