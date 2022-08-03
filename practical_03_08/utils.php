@@ -167,13 +167,8 @@ function saveCustomersToXML(string $filename, mysqli_result $customers)
     $xmlDoc->save($filename);
 }
 
-function saveCustomersToCSVFile(string $filename)
+function saveCustomersToCSVFile(string $filename, mysqli $con)
 {
-    $err = "";
-    $con = connectToDB($err);
-    if ($err !== "")
-        exit();
-
     $filecontent = "";
     $headerline = "Firstname;Lastname;Email;Phone";
     $filecontent = $headerline;
@@ -191,4 +186,13 @@ function saveCustomersToCSVFile(string $filename)
     $file = fopen($filename, "w");
     fwrite($file, $filecontent);
     fclose($file);
+}
+
+function insertCustomersFromFile(string $filename, mysqli $con)
+{
+    $filecontent = file_get_contents($filename);
+    $customersArr = json_decode($filecontent);
+    foreach ($customersArr->customers as $customer) :
+        createCustomer($con, $customer->firstname, $customer->lastname, $customer->email, $customer->phone);
+    endforeach;
 }
