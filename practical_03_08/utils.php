@@ -124,6 +124,22 @@ function saveFromFile(string $filename)
     endwhile;
 }
 
+function saveCustomerJSON(string $filename, mysqli_result $customers)
+{
+    $customersArr = array();
+    while ($entry = $customers->fetch_assoc()) :
+        $customerArr = array(
+            "firstname" => $entry["firstname"],
+            "lastname" => $entry["lastname"],
+            "phone" => $entry["phone"],
+            "email" => $entry["email"]
+        );
+        array_push($customersArr, $customerArr); //push $customerArr to $customersArr
+    endwhile;
+    $json = json_encode(array("customers" => $customersArr), JSON_PRETTY_PRINT);
+    file_put_contents($filename, $json);
+}
+
 function saveCustomersToXML(string $filename, mysqli_result $customers)
 {
     $xmlDoc = new DOMDocument();

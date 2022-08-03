@@ -15,6 +15,10 @@ if ($err === "")
 else
     echo $err;
 
+if (isset($_POST["jsonFilePath"]))
+    saveCustomerJSON($_POST["jsonFilePath"], $customers);
+$customers = selectCustomers($con);
+
 ?>
 
 <head>
@@ -58,6 +62,10 @@ else
         <form method="POST">
             <input value=".xml" name="xmlFilePath">
             <button class="btn">Save to XML</button>
+        </form>
+        <form method="POST">
+            <input value=".json" name="jsonFilePath">
+            <button class="btn">Save to JSON</button>
         </form>
     </div>
 </body>
