@@ -8,13 +8,13 @@ else
     echo $err;
 
 if (isset($_POST["insertFromJSFileName"]))
-    insertCustomersFromFile($_POST["insertFromJSFileName"], $con);
+    insertFromJSONFile($_POST["insertFromJSFileName"], $con);
 
 if (isset($_POST["insertFromXMLFileName"]))
-    insertCustomersFromFile($_POST["insertFromXMLFileName"], $con);
+    insertFromXML($_POST["insertFromXMLFileName"], $con);
 
 if (isset($_POST["insertFromCSVFileName"]))
-    insertCustomersFromFile($_POST["insertFromCSVFileName"], $con);
+    insertFromCSVFile($_POST["insertFromCSVFileName"], $con);
 
 if (isset($_POST["xmlFilePath"]))
     saveCustomersToXML($_POST["xmlFilePath"], $customers);
