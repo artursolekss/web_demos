@@ -60,6 +60,14 @@ class Customer
         return $customers;
     }
 
+    public static function convertCustomersToTextArray(array $customers): array
+    {
+        $customersArray = [];
+        foreach ($customers as $customerObj)
+            array_push($customersArray, $customerObj->getCustomer());
+        return $customersArray;
+    }
+
     // public function createCustomer(mysqli $con)
     // {
     //     $prepStament = $con->prepare("INSERT INTO customer (firstname,lastname,email,phone) VALUES
@@ -133,6 +141,32 @@ class Customer
     {
         $json = json_encode(array("customers" => $customers), JSON_PRETTY_PRINT);
         file_put_contents($filename, $json);
+    }
+
+    public static function generateCustomersTableHTML($customers): string
+    {
+        $customersTable =
+            "<b>
+        <div class='row'>
+            <div class='col'>
+                First name
+            </div>
+            <div class='col'>
+                Last name
+            </div>
+            <div class='col'>
+                E-Mail
+            </div>
+            <div class='col'>
+                Phone
+            </div>
+        </div>
+    </b>";
+
+        foreach ($customers as $customer) :
+            $customersTable .= $customer->getCustomerRow();
+        endforeach;
+        return $customersTable;
     }
 
     public function getCustomerRow()

@@ -1,6 +1,7 @@
 <?php
 include("../utils.php");
 include("customer.php");
+include("tab.php");
 $err = "";
 $con = Utilities::connectToDB($err);
 $customers;
@@ -18,6 +19,13 @@ if (isset($_POST["jsonFilePath"]))
         Customer::convertCustomerArrToJSON($customers)
     );
 
+$customersTable = new Tab();
+$customersTable->addHeader(["First Name", "Last Name", "Phone", "E-Mail"]);
+$customersTable->generateElements(
+    Customer::convertCustomersToTextArray($customers)
+);
+$cutomersTableHTML = $customersTable->finishTable();
+
 ?>
 
 <head>
@@ -30,25 +38,7 @@ if (isset($_POST["jsonFilePath"]))
             <input type="file" name="insertFromJSFileName">
             <button class="btn">Insert from JSON file</button>
         </form>
-        <b>
-            <div class="row">
-                <div class="col">
-                    First name
-                </div>
-                <div class="col">
-                    Last name
-                </div>
-                <div class="col">
-                    E-Mail
-                </div>
-                <div class="col">
-                    Phone
-                </div>
-            </div>
-        </b>
-        <?php foreach ($customers as $customer) :
-            echo ($customer->getCustomerRow());
-        endforeach; ?>
+        <?= $cutomersTableHTML ?>
         <form method="POST">
             <input value=".json" name="jsonFilePath">
             <button class="btn">Save to JSON</button>
