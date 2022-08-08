@@ -26,6 +26,8 @@ $customersTable->generateElements(
 );
 $cutomersTableHTML = $customersTable->finishTable();
 
+Customer::getPersonDummy();//this is fine
+Customer::getCustomerDummy();
 ?>
 
 <head>

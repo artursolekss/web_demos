@@ -1,8 +1,10 @@
 <?php
 
-class Customer
+include("Person.php");
+
+class Customer extends Person
 {
-    private string $firstname, $lastname, $phone, $email;
+    protected string $phone, $email;
 
     public function getCustomer(): array
     {
@@ -36,8 +38,7 @@ class Customer
 
     public function __construct($firstname, $lastname, $phone, $email)
     {
-        $this->firstname = $firstname;
-        $this->lastname = $lastname;
+        parent::__construct($firstname, $lastname);
         $this->phone = $phone;
         $this->email = $email;
     }
@@ -182,4 +183,26 @@ class Customer
             "</div>
             </div>";
     }
+
+    public static function getPersonDummy(): Person
+    {
+        // return new Person("Name","Lastname"); //Fine
+        // return "sfdfd"; //Not-fine
+        // return 434343; // Not-fine, integer is not the person
+        return new Customer("Name", "LastName", "4343423", "test@gmail.com"); //Correct, because 
+        //all the Customer objects are the Persons/
+        //This is called up-casting (pass more specific object to more generic object)
+        // return new Person2("Name", "LastName");//this will fail
+    }
+
+    public static function getCustomerDummy(): Customer
+    {
+        // return new Person("Name", "Lastname");//this will always fail
+        return self::getPersonDummy(); //this will be correct, since getCustomerDummy return 
+        //the object typed as Customer (in fact) - this is called down-casting
+    }
 }
+
+
+////public function getFile(string $filepath): DataFile{  if(isJson($filepat))
+// return new Json();else if(isXML($filepath)) return new XML()...  }
