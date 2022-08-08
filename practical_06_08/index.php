@@ -13,3 +13,4 @@ $simplePerson = new Simple\Person();
 $simplePerson->name = "Jack";
 $simplePerson->lastname = "Sparrow";
 echo "<br>Welcome " . $simplePerson->name . " " . $simplePerson->lastname;
+echo $myPerson->getRowHtml();

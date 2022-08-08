@@ -190,8 +190,8 @@ function saveCustomersToCSVFile(string $filename, mysqli $con)
 function insertFromJSONFile(string $filename, mysqli $con)
 {
     $filecontent = file_get_contents($filename);
-    $customersArr = json_decode($filecontent);
-    foreach ($customersArr->customers as $customer) :
+    $customersObj = json_decode($filecontent);
+    foreach ($customersObj->customers as $customer) :
         createCustomer($con, $customer->firstname, $customer->lastname, $customer->email, $customer->phone);
     endforeach;
 }
