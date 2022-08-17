@@ -1,0 +1,3 @@
+<?php
+$customer = json_decode(file_get_contents('php://input'));
+echo json_encode($customer->firstName);
