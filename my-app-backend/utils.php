@@ -57,42 +57,6 @@ function connectToDB(string &$err = null)
     return $con;
 }
 
-function selectCustomers(mysqli $con, int $id = null): mysqli_result
-{
-    if ($id === null || $id === 0)
-        $query = "SELECT * FROM customer";
-    else
-        $query = "SELECT * FROM customer WHERE id = $id";
-    return $con->query($query);
-}
-
-function updateCustomer(
-    mysqli $con,
-    int $id,
-    string $firstname,
-    string $lastname,
-    string $email,
-    string $phone
-) {
-
-    $query = "UPDATE customer SET firstname='$firstname',lastname='$lastname',email='$email', 
-    phone='$phone' WHERE id=$id";
-    $con->query($query);
-}
-
-function createCustomer(
-    mysqli $con,
-    string $firstname,
-    string $lastname,
-    string $email,
-    string $phone
-) {
-    $prepStament = $con->prepare("INSERT INTO customer (firstname,lastname,email,phone) VALUES
-    (?,?,?,?)");
-    $prepStament->bind_param("ssss", $firstname, $lastname, $email, $phone);
-    $prepStament->execute();
-}
-
 function insertFromCSVFile(string $filename)
 {
     $file = fopen($filename, "r");

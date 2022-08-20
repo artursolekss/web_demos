@@ -1,14 +1,29 @@
 <?php
 
+use Customer as GlobalCustomer;
+
 include("Person.php");
+include("utils.php");
 
 class Customer extends Person
 {
     protected string $phone, $email;
+    protected int $id;
+    protected mysqli $con;
+
+    public function __construct($firstname, $lastname, $phone, $email, $id = 0)
+    {
+        parent::__construct($firstname, $lastname);
+        $this->phone = $phone;
+        $this->email = $email;
+        $this->id = $id;
+        $this->con = connectToDB();
+    }
 
     public function getCustomer(): array
     {
         return [
+            "id" => $this->id,
             "firstname" => $this->firstname,
             "lastname" => $this->lastname,
             "phone" => $this->phone,
@@ -36,15 +51,12 @@ class Customer extends Person
         return $this->email;
     }
 
-    public function __construct($firstname, $lastname, $phone, $email)
+    public static function selectCustomers(mysqli $con = null, int $id = null): array
     {
-        parent::__construct($firstname, $lastname);
-        $this->phone = $phone;
-        $this->email = $email;
-    }
+        if ($con === null) :
+            $con = connectToDB();
+        endif;
 
-    public static function selectCustomers(mysqli $con, int $id = null): array
-    {
         if ($id === null || $id === 0)
             $query = "SELECT * FROM customer";
         else
@@ -54,7 +66,13 @@ class Customer extends Person
         $customers = [];
 
         while ($entry = $result->fetch_assoc()) :
-            $customer = new Customer($entry["firstname"], $entry["lastname"], $entry["phone"], $entry["email"]);
+            $customer = new Customer(
+                $entry["firstname"],
+                $entry["lastname"],
+                $entry["phone"],
+                $entry["email"],
+                $entry["id"]
+            );
             array_push($customers, $customer);
         endwhile;
 
@@ -83,8 +101,12 @@ class Customer extends Person
     //     $prepStament->execute();
     // }
 
-    public static function createCustomer(mysqli $con, Customer $customer)
+    public static function createCustomer(Customer $customer, mysqli $con = null)
     {
+        if ($con === null) :
+            $con = connectToDB();
+        endif;
+
         $prepStament = $con->prepare("INSERT INTO customer (firstname,lastname,email,phone) VALUES
         (?,?,?,?)");
         $prepStament->bind_param(
@@ -112,8 +134,8 @@ class Customer extends Person
     public static function convertFromJSONToCustomer($customer): Customer
     {
         return new Customer(
-            $customer->firstname,
-            $customer->lastname,
+            $customer->firstName,
+            $customer->lastName,
             $customer->phone,
             $customer->email
         );
@@ -189,7 +211,7 @@ class Customer extends Person
         // return new Person("Name","Lastname"); //Fine
         // return "sfdfd"; //Not-fine
         // return 434343; // Not-fine, integer is not the person
-        return new Customer("Name", "LastName", "4343423", "test@gmail.com"); //Correct, because 
+        return new Customer("Name", "LastName", "4343423", "test@gmail.com", 1); //Correct, because 
         //all the Customer objects are the Persons/
         //This is called up-casting (pass more specific object to more generic object)
         // return new Person2("Name", "LastName");//this will fail
