@@ -134,8 +134,8 @@ class Customer extends Person
     public static function convertFromJSONToCustomer($customer): Customer
     {
         return new Customer(
-            $customer->firstName,
-            $customer->lastName,
+            $customer->firstname,
+            $customer->lastname,
             $customer->phone,
             $customer->email
         );
