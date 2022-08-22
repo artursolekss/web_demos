@@ -239,6 +239,12 @@ class Customer extends Person
             </div>";
     }
 
+    public static function getCustomersFromJSON(string $filename)
+    {
+        $filecontent = file_get_contents('files\\' . $filename);
+        return $filecontent;
+    }
+
     public static function getPersonDummy(): Person
     {
         // return new Person("Name","Lastname"); //Fine
