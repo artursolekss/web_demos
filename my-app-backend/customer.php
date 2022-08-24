@@ -237,16 +237,16 @@ class Customer extends Person
             </div>";
     }
 
-    public static function getCustomersFromJSON(string $filename)
+    public static function getCustomersFromJSON(string $filename): string
     {
-        $filecontent = file_get_contents('files\\' . $filename);
+        $filecontent = file_get_contents($filename);
         return $filecontent;
     }
 
-    public static function getCustomersFromXML(string $filename)
+    public static function getCustomersFromXML(string $filename): string
     {
         $xmlDoc = new DOMDocument();
-        $xmlDoc->load('files\\' . $filename);
+        $xmlDoc->load($filename);
 
         $customersArr = [];
         $customers = $xmlDoc->documentElement->getElementsByTagName("customer"); //root element
@@ -258,8 +258,29 @@ class Customer extends Person
             $customerObj = new Customer($firstname, $lastname, $phone, $email);
             array_push($customersArr, $customerObj);
         endforeach;
+        return json_encode(array("customers"
+        => Customer::convertCustomerArrToJSON($customersArr)));
+    }
 
+    public static function getCustomersFromCSV(string $filename): string
+    {
+        $customersArr = [];
+        $file = fopen($filename, "r");
+        if ($file == false) {
+            exit();
+        }
 
+        //We skip the heder line
+        $csvContentLineArr = fgetcsv($file, filesize($filename), ";");
+
+        while ($csvContentLineArr = fgetcsv($file, filesize($filename), ";")) :
+            $firstname = $csvContentLineArr[0];
+            $lastname = $csvContentLineArr[1];
+            $email = $csvContentLineArr[2];
+            $phone = $csvContentLineArr[3];
+            $customerObj = new Customer($firstname, $lastname, $phone, $email);
+            array_push($customersArr, $customerObj);
+        endwhile;
         return json_encode(array("customers"
         => Customer::convertCustomerArrToJSON($customersArr)));
     }
