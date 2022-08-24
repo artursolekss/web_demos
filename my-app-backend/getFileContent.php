@@ -8,4 +8,7 @@ switch ($fileExtension) {
     case "json":
         echo Customer::getCustomersFromJSON($filename);
         break;
+    case "xml":
+        echo Customer::getCustomersFromXML($filename);
+        break;
 }

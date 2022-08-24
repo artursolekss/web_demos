@@ -92,20 +92,6 @@ class Customer extends Person
         return $customersArray;
     }
 
-    // public function createCustomer(mysqli $con)
-    // {
-    //     $prepStament = $con->prepare("INSERT INTO customer (firstname,lastname,email,phone) VALUES
-    //     (?,?,?,?)");
-    //     $prepStament->bind_param(
-    //         "ssss",
-    //         $this->firstname,
-    //         $this->lastname,
-    //         $this->email,
-    //         $this->phone
-    //     );
-    //     $prepStament->execute();
-    // }
-
     public static function createCustomer(Customer $customer, mysqli $con = null)
     {
         if ($con === null) :
@@ -149,6 +135,18 @@ class Customer extends Person
             $this->id
         );
         $prepStament->execute();
+    }
+
+    public static function createCustomers(array $customers, mysqli $con = null)
+    {
+        if ($con === null)
+            $con = connectToDB();
+        foreach ($customers as $customer) :
+            Customer::createCustomer(
+                $customer,
+                $con
+            );
+        endforeach;
     }
 
     public static function insertFromJSONFile(string $filename, mysqli $con)
@@ -245,25 +243,24 @@ class Customer extends Person
         return $filecontent;
     }
 
-    public static function getPersonDummy(): Person
+    public static function getCustomersFromXML(string $filename)
     {
-        // return new Person("Name","Lastname"); //Fine
-        // return "sfdfd"; //Not-fine
-        // return 434343; // Not-fine, integer is not the person
-        return new Customer("Name", "LastName", "4343423", "test@gmail.com", 1); //Correct, because 
-        //all the Customer objects are the Persons/
-        //This is called up-casting (pass more specific object to more generic object)
-        // return new Person2("Name", "LastName");//this will fail
-    }
+        $xmlDoc = new DOMDocument();
+        $xmlDoc->load('files\\' . $filename);
 
-    public static function getCustomerDummy(): Customer
-    {
-        // return new Person("Name", "Lastname");//this will always fail
-        return self::getPersonDummy(); //this will be correct, since getCustomerDummy return 
-        //the object typed as Customer (in fact) - this is called down-casting
+        $customersArr = [];
+        $customers = $xmlDoc->documentElement->getElementsByTagName("customer"); //root element
+        foreach ($customers as $customer) :
+            $firstname =  $customer->getElementsByTagName("firstname")->item(0)->nodeValue;
+            $lastname = $customer->getElementsByTagName("lastname")->item(0)->nodeValue;
+            $phone = $customer->getElementsByTagName("phone")->item(0)->nodeValue;
+            $email = $customer->getElementsByTagName("email")->item(0)->nodeValue;
+            $customerObj = new Customer($firstname, $lastname, $phone, $email);
+            array_push($customersArr, $customerObj);
+        endforeach;
+
+
+        return json_encode(array("customers"
+        => Customer::convertCustomerArrToJSON($customersArr)));
     }
 }
-
-
-////public function getFile(string $filepath): DataFile{  if(isJson($filepat))
-// return new Json();else if(isXML($filepath)) return new XML()...  }
