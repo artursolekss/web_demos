@@ -29,4 +29,6 @@ $newUser = json_decode(file_get_contents('php://input'));
 
 createUser($newUser->username, $newUser->password);
 
-echo json_encode($newUser);
+$response = (object) array("userCreated" => true, "username" => $newUser->username);
+
+echo json_encode($response);
