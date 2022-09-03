@@ -15,25 +15,31 @@ function connectToDB(string &$err = null)
     return $con;
 }
 
-function checkExist($uname, $password): bool
+function checkExist($uname, $password, string &$role): bool
 {
     $con = connectToDB();
-    $prepStament = $con->prepare("SELECT `password` FROM users WHERE
+    $prepStament = $con->prepare("SELECT `password`,`role` FROM users WHERE
     username = ?");
     $prepStament->bind_param("s", $uname);
     $prepStament->execute();
     $result = $prepStament->get_result();
-    $passwordDB = $result->fetch_assoc()["password"];
-    if (password_verify($password, $passwordDB))
+    if (mysqli_num_rows($result) == 0) {
+        return false;
+    }
+    $resultValues = $result->fetch_assoc();
+    $passwordDB = $resultValues["password"];
+    if (password_verify($password, $passwordDB)) {
+        $role = $resultValues["role"];
         return true;
-    else
+    } else
         return false;
 }
 
 $newUser = json_decode(file_get_contents('php://input'));
 
-$userExist = checkExist($newUser->username, $newUser->password);
+$role = "";
+$userExist = checkExist($newUser->username, $newUser->password, $role);
 
-$response = (object) array("userexist" => $userExist);
+$response = (object) array("userexist" => $userExist, "role" => $role);
 
 echo json_encode($response);

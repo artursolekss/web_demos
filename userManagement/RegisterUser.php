@@ -15,12 +15,12 @@ function connectToDB(string &$err = null)
     return $con;
 }
 
-function createUser(string $uname, string $password, mysqli $con)
+function createUser(string $uname, string $password, string $role, mysqli $con)
 {
-    $prepStament = $con->prepare("INSERT INTO users (username,`password`) VALUES
-    (?,?)");
+    $prepStament = $con->prepare("INSERT INTO users (username,`password`,`role`) VALUES
+    (?,?,?)");
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-    $prepStament->bind_param("ss", $uname, $passwordHash);
+    $prepStament->bind_param("sss", $uname, $passwordHash, $role);
     $prepStament->execute();
 }
 
@@ -49,7 +49,12 @@ if (userExists($newUser->username, $con)) {
         "error" => "User already exist"
     );
 } else {
-    createUser($newUser->username, $newUser->password, $con);
+    createUser(
+        $newUser->username,
+        $newUser->password,
+        $newUser->role,
+        $con
+    );
     $response = (object) array(
         "userCreated" => true,
         "username" => $newUser->username,
