@@ -15,9 +15,8 @@ function connectToDB(string &$err = null)
     return $con;
 }
 
-function createUser($uname, $password)
+function createUser(string $uname, string $password, mysqli $con)
 {
-    $con = connectToDB();
     $prepStament = $con->prepare("INSERT INTO users (username,`password`) VALUES
     (?,?)");
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -25,10 +24,36 @@ function createUser($uname, $password)
     $prepStament->execute();
 }
 
+function userExists(string $uname, mysqli $con): bool
+{
+    $prepStament = $con->prepare("SELECT COUNT(1) as `count` FROM users WHERE
+    username = ?");
+    $prepStament->bind_param("s", $uname);
+    $prepStament->execute();
+    $result = $prepStament->get_result();
+    $count = $result->fetch_assoc()["count"];
+    if ($count === 1)
+        return true;
+    else
+        return false;
+}
+
 $newUser = json_decode(file_get_contents('php://input'));
 
-createUser($newUser->username, $newUser->password);
+$con = connectToDB();
 
-$response = (object) array("userCreated" => true, "username" => $newUser->username);
-
+if (userExists($newUser->username, $con)) {
+    $response = (object) array(
+        "userCreated" => false,
+        "username" => $newUser->username,
+        "error" => "User already exist"
+    );
+} else {
+    createUser($newUser->username, $newUser->password, $con);
+    $response = (object) array(
+        "userCreated" => true,
+        "username" => $newUser->username,
+        "error" => ""
+    );
+}
 echo json_encode($response);
